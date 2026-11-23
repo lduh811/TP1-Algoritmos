@@ -1,0 +1,33 @@
+1. FISICA
+1.1 Cuerpo rígido
+Un cuerpo rígido es una geometría (poligono_t) que además tendrá variables y constantes asociadas a su física:
+    * Velocidad v
+    * Velocidad angular w
+    * Masa m (constante) dada por las características del objeto
+    * Momento de inercia i dado por las características del objeto
+
+--> Hacér un TDA con todo eso (y las funciones de creación, destrucción, asignación)
+
+1.2 Intersección, relajación y punto de contacto.
+A la función que decía si dos cuerpos intersecaban hará falta más. Queremos conocer la normal y la distancia de
+la penetración de un objeto en el otro.
+
+La normal tendrá que estar normalizada y además siempre tendrá que apuntar desde el objeto A hacia el B. 
+Consecuentemente habrá que revisar en que caso la normal debe ser N o -N.
+
+La dirección la que un objeto penetró al otro será en la que la distancia entre máximos y mínimos sea menor, 
+es decir, la dirección en la que desplazándonos menos eliminamos la intersección.
+La menor de las dos proyecciones (repasar intersección AABB) será la distancia para esa dirección.
+
+-->Ahora la función de intersección deberá devolver N y d en caso de intersección.
+
+Si dos objetos intersecan, vamos a empujarlos para que dejen de hacerlo.
+Según los objetos sean fijos o no, habrá que realizar operaciones distintas (revisar consignas)
+sobre sus centro de masa.
+
+Para establecer el lugar del punto de contacto P vamos a chequear la distancia de cada segmento de un polígono
+con respecto a todos los vértices del otro y viceversa. El vértice que dé la distancia menor es P.
+(Revisar en las consignas como hallar el punto del segmento más cercano a ese punto)
+
+1.3 Choques
+
