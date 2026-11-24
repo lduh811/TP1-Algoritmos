@@ -1,3 +1,5 @@
+QUEDA DOCUMENTAR FUNCIONES Y CONTRATOS
+
 1. FISICA
 1.1 Cuerpo rígido
 Un cuerpo rígido es una geometría (poligono_t) que además tendrá variables y constantes asociadas a su física:
@@ -28,6 +30,8 @@ sobre sus centro de masa.
 Para establecer el lugar del punto de contacto P vamos a chequear la distancia de cada segmento de un polígono
 con respecto a todos los vértices del otro y viceversa. El vértice que dé la distancia menor es P.
 (Revisar en las consignas como hallar el punto del segmento más cercano a ese punto)
+
+-->esto creo que se implementa más adelante
 
 1.3 Choques
 
