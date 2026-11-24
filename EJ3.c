@@ -113,6 +113,67 @@ struct asset *leer_assets(FILE *f, size_t *n) {
     return assets;
 }
 
+cuerpo_rigido_t *crear_cr_vacio(void) {
+    return calloc(1, sizeof(cuerpo_rigido_t));
+}
+
+void destruir_cr(cuerpo_rigido_t *cr) {
+    if (cr == NULL)
+        return;
+    poligono_destruir(&cr->geometria);
+    free(cr);}
+
+static float momento_inercia(const poligono_t *p, float masa) {
+    size_t n = poligono_cantidad_vertices(p);
+    float num = 0, den = 0;
+
+    for (size_t i = 0; i < n; i++) {
+        vector_t a = poligono_vertice(p, i);
+        vector_t b = poligono_vertice(p, (i + 1) % n);  //el último se une con el primero
+
+        float cruz = producto_vectorial_modulo(a, b);
+        float q = producto_interno(a, a) + producto_interno(a, b) + producto_interno(b, b);
+
+        num += q * cruz;
+        den += cruz;
+    }
+
+    if (den == 0)
+        return 0;  // polígono degenerado
+    return masa / 6.0f * num / den;
+}
+
+bool inicializar_cr(cuerpo_rigido_t *cr, poligono_t geom, vector_t v, float w, float densidad) {
+    if (cr == NULL)
+        return false;
+
+    float m_inv = 0, i_inv = 0; 
+
+    if (densidad > 0) {
+        float masa = densidad * poligono_area(&geom);
+        float inercia = momento_inercia(&geom, masa);
+        if (masa > 0 && inercia > 0) {
+            m_inv = 1.0f / masa;
+            i_inv = 1.0f / inercia;
+        }
+    }
+    cuerpo_rigido_t tmp = {
+        .geometria = geom,
+        .v = v,
+        .w = w,
+        .m_inv = m_inv,
+        .i_inv = i_inv,
+    };
+    memcpy(cr, &tmp, sizeof(tmp));
+    return true;
+}
+
+void actualizar_cr(cuerpo_rigido_t *cr, float dt) {
+    poligono_trasladar(&cr->geometria, cr->v.x * dt, cr->v.y * dt);  // cm' 
+    poligono_rotar(&cr->geometria, cr->w * dt);                      // a' 
+}
+
+
 struct nivel *leer_nivel(FILE *f) {
     if (f == NULL) {
         fprintf(stderr,"Error: archivo corrupto o incompleto.");

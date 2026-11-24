@@ -11,7 +11,7 @@
 typedef struct {
     float x, y;
 } vector_t;
-
+                                                        
 typedef struct {
     vector_t *coordenadas; // Arreglo dinámico de n coordenadas, con centro de masa en el origen
     size_t n; // Cantidad de coordenadas.

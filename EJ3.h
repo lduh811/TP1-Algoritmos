@@ -2,6 +2,7 @@
 #define EJ3_H
 
 #include "poligonos.h"
+#include "cuerpo_rigido.h"
 #include <stdint.h>
 #include <stdbool.h> 
 #include <stdio.h>
