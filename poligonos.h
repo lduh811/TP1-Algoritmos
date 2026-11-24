@@ -27,7 +27,6 @@ float vector_producto_escalar(vector_t a, vector_t b);
 //Devuelve el producto vectorial entre los vectores a y b
 float vector_producto_vectorial(vector_t a, vector_t b);
 
-
 vector_t vector_restar(vector_t a, vector_t b);
 
 vector_t vector_perpendicular(vector_t a);
@@ -37,6 +36,8 @@ float vector_norma(vector_t a);
 void vector_rotar(vector_t v[], size_t n, double a);
 
 void vector_trasladar(vector_t v[], size_t n, vector_t t);
+
+float area_poligono(poligono_t *p);
 
 vector_t vector_centro_de_masa(const vector_t v[], size_t n);
 
@@ -62,6 +63,6 @@ void poligono_set_a(poligono_t *poligono, double a);
 
 void poligono_transformar(poligono_t *poligono, vector_t cm, double a);
 
-bool poligono_hay_interseccion(const poligono_t *a, const poligono_t *b);
+bool poligono_hay_interseccion(const poligono_t *a, const poligono_t *b, vector_t *n, float *d);
 
 #endif

@@ -42,6 +42,15 @@ void vector_trasladar(vector_t v[], size_t n, vector_t t) {
     }    
 }
 
+float area_poligono(poligono_t *p) {
+    float area = 0;
+    for(size_t i = 0; i < p->n; i++) {
+        area += vector_producto_vectorial(p->coordenadas[i], p->coordenadas[(i + 1) % p->n]);
+    }
+    if(area < 0) return area * -0.5;
+    else return area * 0.5;
+}
+
 vector_t vector_centro_de_masa(const vector_t v[], size_t n) {
     float area = 0, cmx = 0, cmy = 0;
     for (size_t i = 0; i < n; i++) {
@@ -185,31 +194,68 @@ vector_t proyectar(vector_t v[], size_t n, vector_t eje) {
     return ab;
 }
 
-bool poligono_hay_interseccion(const poligono_t *a, const poligono_t *b) {
+void normalizar(vector_t *v) {
+    float norma = vector_norma(*v);
+    v->x /= norma;
+    v->y /= norma;
+}
+
+bool poligono_hay_interseccion(const poligono_t *a, const poligono_t *b, vector_t *n, float *d) {
     double distancia = vector_norma(vector_restar(a->cm, b->cm));
     if(distancia > a->radio + b->radio)
         return false;
 
+    float d_anterior, d_actual;
     for(size_t i = 0; i < a->n; i++) {
         vector_t lado = vector_restar(a->cs[(i+1)%a->n], a->cs[i]); 
         vector_t normal = vector_perpendicular(lado);
+        normalizar(&normal);
 
         vector_t proyeccion_a = proyectar(a->cs, a->n, normal);
         vector_t proyeccion_b = proyectar(b->cs, b->n, normal);
         
         if(proyeccion_a.y < proyeccion_b.x || proyeccion_b.y < proyeccion_a.x)
             return false;
+
+        float d1 = proyeccion_a.y - proyeccion_b.x;
+        float d2 = proyeccion_b.y - proyeccion_a.x;
+        vector_t n_aux;
+        if(d1 < d2) {
+            d_actual = d1;
+            n_aux.x = -n->x; n_aux.y = -n->y;
+        }
+        d_actual = d1 < d2 ? d1 : d2;
+        if(i > 0 && d_anterior > d_actual) {
+            *d = d_actual;
+            *n = n_aux; 
+        }
+        d_anterior = d_actual;
     }
 
     for(size_t i = 0; i < b->n; i++) { 
         vector_t lado = vector_restar(b->cs[(i+1)%b->n], b->cs[i]);
         vector_t normal = vector_perpendicular(lado);
+        normalizar(&normal);
 
         vector_t proyeccion_a = proyectar(a->cs, a->n, normal);
         vector_t proyeccion_b = proyectar(b->cs, b->n, normal);
 
         if(proyeccion_a.y < proyeccion_b.x || proyeccion_b.y < proyeccion_a.x)
             return false;
+
+        float d1 = proyeccion_a.y - proyeccion_b.x;
+        float d2 = proyeccion_b.y - proyeccion_a.x;
+        vector_t n_aux = normal;
+        if(d1 < d2) {
+            d_actual = d1;
+            n_aux.x = -n_aux.x; n_aux.y = -n_aux.y;
+        }
+        d_actual = d1 < d2 ? d1 : d2;
+        if(d_anterior > d_actual) {
+            *d = d_actual;
+            *n = n_aux;
+        }
+        d_anterior = d_actual;
     }
 
     return true;
